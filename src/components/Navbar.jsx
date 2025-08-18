@@ -1,7 +1,16 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-function Navbar({ cartCount }) {
+function Navbar({ cartCount, user, setUser }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/");
+  };
+
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center fixed top-0 left-0 w-full z-50 h-16">
       {/* Logo */}
@@ -22,7 +31,7 @@ function Navbar({ cartCount }) {
         </li>
       </ul>
 
-      {/* Cart & Login */}
+      {/* Cart & User/Profile */}
       <div className="flex items-center gap-4">
         <Link to="/cart">
           <button className="relative bg-gray-100 px-3 py-2 rounded hover:bg-gray-200">
@@ -34,10 +43,25 @@ function Navbar({ cartCount }) {
             )}
           </button>
         </Link>
-
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Login
-        </button>
+        {user ? (
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-gray-700">
+              {user.name || user.email}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="bg-gray-200 text-gray-700 px-3 py-2 rounded hover:bg-gray-300"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link to="/login">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              Login
+            </button>
+          </Link>
+        )}
       </div>
     </nav>
   );
